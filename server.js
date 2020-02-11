@@ -1,4 +1,4 @@
-if (process.env.NODE_ENV !== 'pruction') {
+if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
 }
 
@@ -9,14 +9,18 @@ const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 
-
 const initializePassport = require('./passport-config')
 initializePassport(
     passport,
     email => users.find(user => user.email === email)
 )
 
-const users = []
+app.get('/Home', (req, res) => {
+    res.render('homepage.ejs')
+})
+
+
+const users = []    
 
 app.set('view-engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
@@ -39,7 +43,7 @@ app.get('/login', (req, res) => {
 })
 
 app.post('/login', passport.authenticate('local', {
-    successRedirect: '/',
+    successRedirect: '/Home',
     failureRedirect: '/login',
     failureFlash: true
 }))
