@@ -1,4 +1,4 @@
-if (process.env.NODE_ENV !== 'pruction') {
+if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
 }
 
@@ -9,14 +9,14 @@ const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 
-
 const initializePassport = require('./passport-config')
 initializePassport(
     passport,
-    email => users.find(user => user.email === email)
+    email => users.find(user => user.email === email),
+    id => users.find(user => user.id === id)
 )
 
-const users = []
+const users = []    
 
 app.set('view-engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
@@ -26,11 +26,12 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }))
+
 app.use(passport.initialize())
 app.use(passport.session())
 
-app.get('/', (req, res) => {
-    res.render('index.ejs', { name: 'Tore'})
+app.get('/home', (req, res) => {
+    res.render('homepage.ejs')
 })
 
 
@@ -39,7 +40,7 @@ app.get('/login', (req, res) => {
 })
 
 app.post('/login', passport.authenticate('local', {
-    successRedirect: '/',
+    successRedirect: '/home',
     failureRedirect: '/login',
     failureFlash: true
 }))
@@ -47,6 +48,7 @@ app.post('/login', passport.authenticate('local', {
 app.get('/register', (req, res) => {
     res.render('register.ejs')
 })
+
 app.post('/register', async (req, res)  => {
     try {
         const hashedPasswords = await bcrypt.hash(req.body.password, 10) //Encrypts password
@@ -56,11 +58,13 @@ app.post('/register', async (req, res)  => {
             email: req.body.email,
             password: hashedPasswords
         })
-        res.redirect('/Login')
+        res.redirect('/login')
     } catch {
-        console.log('failed')
+        res.redirect('/register')
     }
     console.log(users)
  })
+
+
 
 app.listen(3000)

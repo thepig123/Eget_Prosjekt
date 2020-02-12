@@ -1,0 +1,83 @@
+<html>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 25%;
+    }
+    td, th {
+        border: 1px solid black;
+        padding: 7px;
+    }
+    th {
+        font-weight: bold;
+    }
+    tr:nth-child(even) {
+        background-color: lightgreen;
+    }
+    tr:nth-child(odd) {
+        background-color: lightskyblue;
+    }
+</style>
+
+<script>
+    let sortDirection = false;
+    let personData = [
+        { name: 'Tore', age: 18},
+        { name: 'Gunleiv', age: 18},
+        { name: 'Johanne', age: 18},
+        { name: 'Laura', age: 19},
+        { name: 'Tore', age: 18}
+    ];
+window.onload = () => {
+    loadTableData(personData);
+}
+function loadTableData(personData) {
+    const tableBody = document.getElementById('tableData');
+    let dataHtml = '';
+    for(let person of personData) {
+        dataHtml += `<tr><td>${person.name}</td><td>${person.age}</td></tr>`;
+    }
+    
+    tableBody.innerHTML = dataHtml;
+}
+function sortColumn(columnName) {
+    const dataType = typeof personData[0][columnName];
+    sortDirection = !sortDirection;
+    switch(dataType) {
+        case 'number':
+        sortNumberColumn(sortDirection, columnName);
+        break;
+    }
+    
+    loadTableData(personData);
+}
+function sortNumberColumn(sort, columnName) {
+    tableData = tableData.sort((p1, p2) => {
+        return sort ? p1[columnName] - p2[columnName] : p2[columnName] - p1[columnName]
+    });
+}
+</script>
+
+<body>
+    <table>
+        <thead>
+        <tr>
+
+            <th style="background-color: red">Song</th>
+            <th onclick="sortColumn('Votes')">Votes</th>
+
+         </tr>
+
+        </thead>
+
+
+    <tbody id='tableData'> </tbody>
+  
+    </table>
+
+
+</body>
+
+
+
+</html>
